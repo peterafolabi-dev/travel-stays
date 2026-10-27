@@ -236,7 +236,7 @@ export default function Navbar({ overlay = false }) {
                   </NavLink>
                 </motion.div>
               ))}
-              <hr className="my-2 border-stone-100" />
+              {links.length > 0 && <hr className="my-2 border-stone-100" />}
               {user ? (
                 <>
                   <div className="px-3 py-2">

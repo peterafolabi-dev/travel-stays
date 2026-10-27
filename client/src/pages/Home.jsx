@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
 import {
   ArrowRight,
-  ArrowUpRight,
   CalendarCheck,
   Compass,
   CreditCard,
@@ -279,25 +278,18 @@ function StayTypes() {
         className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4"
       >
         {PROPERTY_TYPES.map((type) => (
-          <motion.div key={type.value} variants={fadeUp}>
-            <Link to={`/stays?type=${type.value}`} className="group relative block aspect-3/4 overflow-hidden rounded-3xl">
-              <img
-                src={propertyTypeImages[type.value]}
-                alt=""
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4 sm:p-5">
-                <span>
-                  <span className="block font-display text-xl text-white sm:text-2xl">{type.label}</span>
-                  <span className="hidden text-sm text-white/70 sm:block">{typeBlurbs[type.value]}</span>
-                </span>
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition-all duration-500 group-hover:rotate-45 group-hover:bg-white group-hover:text-ink">
-                  <ArrowUpRight className="h-5 w-5" />
-                </span>
-              </div>
-            </Link>
+          <motion.div key={type.value} variants={fadeUp} className="relative aspect-3/4 overflow-hidden rounded-3xl">
+            <img
+              src={propertyTypeImages[type.value]}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              <span className="block font-display text-xl text-white sm:text-2xl">{type.label}</span>
+              <span className="hidden text-sm text-white/70 sm:block">{typeBlurbs[type.value]}</span>
+            </div>
           </motion.div>
         ))}
       </motion.div>
@@ -372,17 +364,6 @@ function FeaturedCity() {
                 {tag}
               </span>
             ))}
-          </Reveal>
-          <Reveal delay={0.3} className="mt-10">
-            <Link
-              to="/stays?city=Lagos"
-              className="group inline-flex items-center gap-3 rounded-full bg-emerald-800 py-3 pl-6 pr-3 font-semibold text-white transition hover:bg-emerald-900"
-            >
-              Explore stays in Lagos
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-white/15 transition-transform duration-500 group-hover:rotate-45">
-                <ArrowUpRight className="h-4 w-4" />
-              </span>
-            </Link>
           </Reveal>
         </div>
       </div>
