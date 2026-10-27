@@ -214,8 +214,75 @@ export default function AdminTrust({ onChange }) {
           {!reports.loading && !open.length && <li className="text-sm text-stone-500">No open reports.</li>}
         </ul>
       </section>
+      <RefundsPanel />
       <MessagesPanel />
     </div>
+  )
+}
+
+// Paid bookings that were cancelled with money owed back (migration 015).
+// The refund itself is sent from the Paystack dashboard; this is the to-do list.
+function RefundsPanel() {
+  const toast = useToast()
+  const refunds = useAsync(fetchRefundsDue, 'refunds-due')
+  const [busy, setBusy] = useState(null)
+  const list = refunds.data ?? []
+
+  async function done(r) {
+    setBusy(r.booking_id)
+    try {
+      await markRefunded(r.booking_id)
+      toast.show({ title: 'Marked as refunded', description: `${formatNaira(r.refund_amount)} to ${r.guest_name || 'the guest'}` })
+      refunds.reload()
+    } catch (err) {
+      toast.show({ type: 'error', title: 'Something went wrong', description: err.message })
+    }
+    setBusy(null)
+  }
+
+  return (
+    <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-stone-900/5 lg:col-span-2">
+      <div className="flex items-center justify-between">
+        <h2 className="flex items-center gap-2 font-semibold text-stone-900">
+          <Undo2 className="h-5 w-5 text-amber-600" /> Refunds to send
+        </h2>
+        <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">{list.length} waiting</span>
+      </div>
+      <p className="text-sm text-stone-500">
+        Send each refund from the Paystack dashboard (Transactions → find the reference → Refund), then mark it here.
+      </p>
+      {refunds.error && <p className="mt-4 text-sm text-red-700">{refunds.error}</p>}
+      <ul className="mt-4 grid gap-3 lg:grid-cols-2">
+        {list.map((r) => (
+          <li key={r.booking_id} className="flex flex-col rounded-xl bg-stone-50 p-4">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="font-medium text-stone-900">{r.guest_name || 'Guest'}</p>
+                <p className="truncate text-xs text-stone-500">
+                  {r.guest_email} · {r.listing_title} · cancelled {timeAgo(r.cancelled_at)}
+                </p>
+              </div>
+              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-sm font-semibold tabular-nums text-amber-900">
+                {formatNaira(r.refund_amount)}
+              </span>
+            </div>
+            <p className="mt-2 flex-1 text-xs text-stone-500">
+              Paid {formatNaira(r.total)} · Paystack ref <span className="font-mono text-stone-700">{r.payment_reference || '—'}</span>
+            </p>
+            <div className="mt-3">
+              <button
+                disabled={busy === r.booking_id}
+                onClick={() => done(r)}
+                className="flex items-center gap-1 rounded-full bg-emerald-800 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-900 disabled:opacity-50"
+              >
+                <Check className="h-4 w-4" /> Mark refunded
+              </button>
+            </div>
+          </li>
+        ))}
+        {!refunds.loading && !list.length && <li className="text-sm text-stone-500">No refunds waiting.</li>}
+      </ul>
+    </section>
   )
 }
 

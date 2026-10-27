@@ -119,6 +119,7 @@ function ThingsToKnow({ listing }) {
             {policy.label}
           </p>
           <p className="mt-2 text-sm leading-relaxed text-stone-600">{policy.text}</p>
+          <p className="mt-2 text-xs leading-relaxed text-stone-500">{CANCELLATION_NOTE}</p>
         </div>
       </div>
     </Reveal>

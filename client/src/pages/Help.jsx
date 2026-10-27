@@ -25,7 +25,7 @@ const FAQ_GROUPS = [
       },
       {
         q: 'How do I cancel a booking?',
-        a: 'Go to My trips, open the booking and choose Cancel booking. You can cancel any time before your check-in day. Any refund follows the listing’s cancellation policy.',
+        a: 'Go to My trips, open the booking and choose Cancel booking. You can cancel any time before your check-in day. Before you confirm, we show exactly how much you’ll get back under the listing’s cancellation policy — the service fee is non-refundable, and unpaid bookings are free to cancel. Refunds reach your card in 5–10 working days.',
       },
     ],
   },

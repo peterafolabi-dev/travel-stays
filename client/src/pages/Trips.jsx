@@ -223,7 +223,7 @@ export default function Trips() {
   const shown = groups[tab]
 
   async function cancelTour(booking) {
-    if (!window.confirm('Cancel this tour booking?')) return
+    if (!window.confirm('Cancel this tour booking? No payment was taken for it, so cancelling is free.')) return
     setBusy(booking.id)
     try {
       await cancelTourBooking(booking.id)
