@@ -77,6 +77,14 @@ export async function respondToBooking(id, accept) {
   if (error) throw new Error(error.message)
 }
 
+// What the guest would get back if they cancelled now (worked out on the server
+// from the listing's cancellation policy — see migration 015).
+export async function fetchCancellationQuote(id) {
+  const { data, error } = await supabase.rpc('cancellation_quote', { p_booking_id: id })
+  if (error) throw new Error(error.message)
+  return data
+}
+
 export async function cancelBooking(id) {
   const { error } = await supabase.rpc('cancel_booking', { p_booking_id: id })
   if (error) throw new Error(error.message)
