@@ -52,7 +52,9 @@ export default function Terms() {
       <InfoSection title="5. Cancellations and refunds">
         <p>
           Each listing has a Flexible, Moderate or Strict cancellation policy, shown on the listing before you book.
-          Refunds follow that policy. Hosts who cancel a confirmed booking may have their listing reviewed. Full
+          Refunds of the nightly cost follow that policy. The service fee is non-refundable, the cleaning fee is
+          refunded if you cancel before check-in, and unpaid bookings can be cancelled for free. You see the exact
+          refund before you confirm a cancellation, and it reaches your card within 5–10 working days. Hosts who cancel a confirmed booking may have their listing reviewed. Full
           details are in our <Link to="/help#cancellation">cancellation options</Link>.
         </p>
       </InfoSection>
