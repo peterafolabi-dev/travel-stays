@@ -403,7 +403,7 @@ export default function MemberHome() {
             <Link
               key={to + label}
               to={to}
-              className={`group flex aspect-4/3 flex-col justify-between rounded-3xl p-5 transition hover:-translate-y-1 hover:shadow-lg sm:aspect-5/4 ${tone}`}
+              className={`group flex h-32 flex-col justify-between rounded-3xl p-5 transition hover:-translate-y-1 hover:shadow-lg sm:h-36 ${tone}`}
             >
               <Icon className="h-7 w-7" strokeWidth={1.75} />
               <span className="flex items-center justify-between text-base font-semibold sm:text-lg">

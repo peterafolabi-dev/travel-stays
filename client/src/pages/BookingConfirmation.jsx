@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useToast } from '../context/ToastContext'
 import { motion } from 'motion/react'
 import { ArrowRight, BadgeCheck, CalendarDays, Hourglass, MapPin, Users, XCircle } from 'lucide-react'
 import PayButton from '../components/PayButton'
@@ -149,6 +150,8 @@ export default function BookingConfirmation() {
   const { id } = useParams()
   const { data: booking, loading, error, reload } = useAsync(() => fetchBooking(id), id)
   const [showCancel, setShowCancel] = useState(false)
+  const navigate = useNavigate()
+  const toast = useToast()
 
   if (loading && !booking) {
     return (
@@ -342,9 +345,16 @@ export default function BookingConfirmation() {
         booking={booking}
         open={showCancel}
         onClose={() => setShowCancel(false)}
-        onCancelled={() => {
-          setShowCancel(false)
-          reload()
+        onCancelled={(q) => {
+          toast.show({
+            title: 'Booking cancelled',
+            description: !q?.paid
+              ? 'Nothing was charged.'
+              : q.refund > 0
+                ? `${formatNaira(q.refund)} will be refunded to your card within 5–10 working days.`
+                : 'This booking was non-refundable, so no money is returned.',
+          })
+          navigate('/trips', { replace: true })
         }}
       />
     </div>

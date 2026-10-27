@@ -39,9 +39,9 @@ export default function CancelBookingDialog({ booking, open, onClose, onCancelle
     setCancelError('')
     setCancelling(true)
     try {
-      const updated = await cancelBooking(booking.id)
+      await cancelBooking(booking.id)
       setAgreed(false)
-      onCancelled(updated)
+      onCancelled(q)
     } catch (err) {
       setCancelError(err.message)
     }
