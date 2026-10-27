@@ -4,9 +4,10 @@ import { motion } from 'motion/react'
 import { ArrowRight, BadgeCheck, CalendarDays, Hourglass, MapPin, Users, XCircle } from 'lucide-react'
 import PayButton from '../components/PayButton'
 import TripSafety from '../components/TripSafety'
+import CancelBookingDialog from '../components/CancelBookingDialog'
 import ReviewForm, { YourReview } from '../components/ReviewForm'
 import { useAsync } from '../hooks/useAsync'
-import { cancelBooking, fetchBooking } from '../lib/bookings'
+import { fetchBooking } from '../lib/bookings'
 import { formatLongDate, todayISO } from '../lib/dates'
 import { formatNaira } from '../lib/format'
 import { ease, fadeUp, stagger } from '../lib/motion'
@@ -77,6 +78,17 @@ function StatusIcon({ icon: Icon, tone }) {
   )
 }
 
+// What happened to the money when a booking was cancelled (see migration 015).
+function cancelledText(booking) {
+  const refund = formatNaira(booking.refund_amount ?? 0)
+  if (booking.payment_status === 'refund_pending') {
+    return `A refund of ${refund} is on its way to the card you paid with (usually 5–10 working days).`
+  }
+  if (booking.payment_status === 'refunded') return `${refund} was refunded to the card you paid with.`
+  if (booking.refund_amount === 0) return 'This booking was non-refundable when you cancelled it, so no money was returned.'
+  return 'This booking was cancelled before any payment, so nothing was charged. The dates are free again.'
+}
+
 function statusContent(booking) {
   const city = booking.listing?.city ?? 'your stay'
   switch (booking.status) {
@@ -110,7 +122,7 @@ function statusContent(booking) {
       return {
         mark: <StatusIcon icon={XCircle} tone="bg-stone-100 text-stone-500" />,
         title: 'Booking cancelled',
-        text: 'This booking was cancelled and the dates are free again.',
+        text: cancelledText(booking),
       }
     default:
       return {
@@ -136,8 +148,7 @@ function Detail({ icon: Icon, label, value }) {
 export default function BookingConfirmation() {
   const { id } = useParams()
   const { data: booking, loading, error, reload } = useAsync(() => fetchBooking(id), id)
-  const [cancelling, setCancelling] = useState(false)
-  const [cancelError, setCancelError] = useState('')
+  const [showCancel, setShowCancel] = useState(false)
 
   if (loading && !booking) {
     return (
@@ -163,19 +174,6 @@ export default function BookingConfirmation() {
   const canCancel = ['pending', 'confirmed'].includes(booking.status) && booking.check_in > todayISO()
   const reference = booking.id.slice(0, 8).toUpperCase()
 
-  async function handleCancel() {
-    if (!window.confirm('Cancel this booking? The dates will be released.')) return
-    setCancelError('')
-    setCancelling(true)
-    try {
-      await cancelBooking(booking.id)
-      reload()
-    } catch (err) {
-      setCancelError(err.message)
-    } finally {
-      setCancelling(false)
-    }
-  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 pb-16 pt-8 sm:px-6">
@@ -252,7 +250,11 @@ export default function BookingConfirmation() {
               <span className="tabular-nums">{formatNaira(booking.total)}</span>
             </div>
             <p className="pt-1 text-xs text-stone-400">
-              {booking.payment_status === 'paid'
+              {booking.payment_status === 'refund_pending'
+                ? `Cancelled · refund of ${formatNaira(booking.refund_amount ?? 0)} on its way`
+                : booking.payment_status === 'refunded'
+                  ? `Cancelled · ${formatNaira(booking.refund_amount ?? 0)} refunded`
+                  : booking.payment_status === 'paid'
                 ? `Paid${booking.paid_at ? ` on ${formatLongDate(booking.paid_at.slice(0, 10))}` : ''} · Ref ${booking.payment_reference}`
                 : booking.status === 'pending'
                   ? "You'll pay once the host accepts your request."
@@ -309,20 +311,13 @@ export default function BookingConfirmation() {
         booking.check_out <= todayISO() && <ReviewForm booking={booking} onSubmitted={reload} />
       )}
 
-      {cancelError && (
-        <div className="mt-6">
-          <Alert>{cancelError}</Alert>
-        </div>
-      )}
-
       <div className="mt-8 flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
         {canCancel ? (
           <button
-            onClick={handleCancel}
-            disabled={cancelling}
-            className="text-sm font-semibold text-stone-500 underline underline-offset-4 transition hover:text-red-600 disabled:opacity-50"
+            onClick={() => setShowCancel(true)}
+            className="text-sm font-semibold text-stone-500 underline underline-offset-4 transition hover:text-red-600"
           >
-            {cancelling ? 'Cancelling…' : 'Cancel booking'}
+            Cancel booking
           </button>
         ) : (
           <span />
@@ -342,6 +337,16 @@ export default function BookingConfirmation() {
           </Link>
         </div>
       </div>
+
+      <CancelBookingDialog
+        booking={booking}
+        open={showCancel}
+        onClose={() => setShowCancel(false)}
+        onCancelled={() => {
+          setShowCancel(false)
+          reload()
+        }}
+      />
     </div>
   )
 }
