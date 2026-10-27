@@ -1,48 +1,28 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Loader2, MailCheck, RotateCw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { friendlyAuthError } from '../lib/authErrors'
 import { useCooldown } from '../hooks/useCooldown'
 import { Alert } from './AuthShell'
 
-const LENGTH = 6
+// Supabase can be set to send codes of 6 to 10 digits, so accept any of them.
+const MIN_LENGTH = 6
+const MAX_LENGTH = 10
 const RESEND_SECONDS = 60
 
-// "Enter the 6-digit code we emailed you." Six boxes that move along as you
-// type and fill in at once when you paste. Calls onVerified(session) on success.
+// "Enter the code we emailed you." One large box that takes typing, pasting
+// and phone autofill. Calls onVerified(session) on success.
 export default function EmailCodeForm({ email, onVerified }) {
-  const [digits, setDigits] = useState(Array(LENGTH).fill(''))
+  const [code, setCode] = useState('')
   const [error, setError] = useState('')
   const [verifying, setVerifying] = useState(false)
   const [resent, setResent] = useState(false)
   const [cooldown, setCooldown] = useCooldown(RESEND_SECONDS) // an email was just sent
-  const boxes = useRef([])
-
-  const code = digits.join('')
-
-  function setDigit(index, value) {
-    const clean = value.replace(/\D/g, '')
-    if (clean.length > 1) {
-      // Pasted (or autofilled) the whole code.
-      const next = clean.slice(0, LENGTH).split('')
-      setDigits([...next, ...Array(LENGTH - next.length).fill('')])
-      boxes.current[Math.min(next.length, LENGTH - 1)]?.focus()
-      return
-    }
-    const next = [...digits]
-    next[index] = clean
-    setDigits(next)
-    if (clean && index < LENGTH - 1) boxes.current[index + 1]?.focus()
-  }
-
-  function handleKeyDown(index, e) {
-    if (e.key === 'Backspace' && !digits[index] && index > 0) boxes.current[index - 1]?.focus()
-  }
 
   async function verify(e) {
     e.preventDefault()
     setError('')
-    if (code.length < LENGTH) return setError(`Enter all ${LENGTH} digits from the email.`)
+    if (code.length < MIN_LENGTH) return setError('Enter the full code from the email.')
     setVerifying(true)
     const { data, error: err } = await supabase.auth.verifyOtp({ email, token: code, type: 'email' })
     setVerifying(false)
@@ -69,9 +49,8 @@ export default function EmailCodeForm({ email, onVerified }) {
       return
     }
     setResent(true)
-    setDigits(Array(LENGTH).fill(''))
+    setCode('')
     setCooldown(RESEND_SECONDS)
-    boxes.current[0]?.focus()
   }
 
   return (
@@ -79,30 +58,24 @@ export default function EmailCodeForm({ email, onVerified }) {
       <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-900 ring-1 ring-emerald-100">
         <MailCheck className="h-6 w-6 shrink-0 text-emerald-700" />
         <p>
-          We sent a {LENGTH}-digit code to <strong className="break-all">{email}</strong>. It can take a minute — check
-          your spam folder too.
+          We sent a code to <strong className="break-all">{email}</strong>. It can take a minute — check your spam
+          folder too.
         </p>
       </div>
 
-      <div className="flex justify-between gap-2" role="group" aria-label="Verification code">
-        {digits.map((digit, i) => (
-          <input
-            key={i}
-            ref={(el) => {
-              boxes.current[i] = el
-            }}
-            value={digit}
-            onChange={(e) => setDigit(i, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(i, e)}
-            inputMode="numeric"
-            autoComplete={i === 0 ? 'one-time-code' : 'off'}
-            maxLength={i === 0 ? LENGTH : 1}
-            autoFocus={i === 0}
-            aria-label={`Digit ${i + 1}`}
-            className="h-14 w-full min-w-0 rounded-xl bg-white text-center font-display text-2xl text-stone-900 ring-1 ring-stone-300 outline-none transition focus:ring-2 focus:ring-emerald-700 sm:h-16"
-          />
-        ))}
-      </div>
+      <label className="block">
+        <span className="text-sm font-medium text-stone-700">Verification code</span>
+        <input
+          value={code}
+          onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, MAX_LENGTH))}
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          autoFocus
+          placeholder="Enter the code"
+          aria-label="Verification code"
+          className="mt-1.5 w-full rounded-xl bg-white px-4 py-4 text-center font-display text-3xl tracking-[0.35em] text-stone-900 ring-1 ring-stone-300 outline-none transition placeholder:text-base placeholder:tracking-normal placeholder:text-stone-400 focus:ring-2 focus:ring-emerald-700"
+        />
+      </label>
 
       {error && <Alert>{error}</Alert>}
       {resent && !error && <Alert type="success">A new code is on its way.</Alert>}
