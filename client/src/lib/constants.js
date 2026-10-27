@@ -56,21 +56,25 @@ export const CANCELLATION_POLICIES = [
     value: 'flexible',
     label: 'Flexible',
     short: 'Free cancellation until 24 hours before check-in',
-    text: 'Full refund if cancelled at least 24 hours before check-in. After that, the first night is non-refundable.',
+    text: 'The nightly cost is refunded in full if you cancel at least 24 hours before check-in. After that, the first night is non-refundable.',
   },
   {
     value: 'moderate',
     label: 'Moderate',
     short: 'Free cancellation until 5 days before check-in',
-    text: 'Full refund if cancelled at least 5 days before check-in. After that, 50% of the nightly cost is refunded.',
+    text: 'The nightly cost is refunded in full if you cancel at least 5 days before check-in. After that, 50% of the nightly cost is refunded.',
   },
   {
     value: 'strict',
     label: 'Strict',
     short: '50% refund until 7 days before check-in',
-    text: '50% refund if cancelled at least 7 days before check-in. No refund after that.',
+    text: '50% of the nightly cost is refunded if you cancel at least 7 days before check-in. After that, the nightly cost is non-refundable.',
   },
 ]
+
+// Applies to every policy once a booking is paid (see migration 015).
+export const CANCELLATION_NOTE =
+  'The service fee is non-refundable. The cleaning fee is refunded if you cancel before check-in. Bookings you haven’t paid for yet can be cancelled for free.'
 
 export function cancellationPolicy(value) {
   return CANCELLATION_POLICIES.find((p) => p.value === value) ?? CANCELLATION_POLICIES[1]

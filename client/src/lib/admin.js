@@ -15,6 +15,18 @@ export async function fetchAdminUsers() {
   return data ?? []
 }
 
+// Cancelled bookings whose refund still has to be sent (migration 015).
+export async function fetchRefundsDue() {
+  const { data, error } = await supabase.rpc('admin_refunds')
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
+export async function markRefunded(bookingId) {
+  const { error } = await supabase.rpc('mark_refunded', { p_booking_id: bookingId })
+  if (error) throw new Error(error.message)
+}
+
 // "Last seen" heartbeat — failures are harmless, so they're only logged.
 export async function touchLastSeen() {
   const { error } = await supabase.rpc('touch_last_seen')
