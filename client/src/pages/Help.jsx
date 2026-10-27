@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { ChevronDown, ShieldAlert } from 'lucide-react'
-import { CANCELLATION_POLICIES } from '../lib/constants'
+import { CANCELLATION_NOTE, CANCELLATION_POLICIES } from '../lib/constants'
 import { ease } from '../lib/motion'
 import InfoPage, { InfoSection } from '../components/InfoPage'
 import ContactForm from '../components/ContactForm'
@@ -158,6 +158,7 @@ export default function Help() {
             </div>
           ))}
         </div>
+        <p className="text-sm text-stone-500">{CANCELLATION_NOTE}</p>
       </InfoSection>
 
       <InfoSection id="safety" title="Staying safe">
