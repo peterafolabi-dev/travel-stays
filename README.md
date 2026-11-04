@@ -19,11 +19,11 @@ A two-sided marketplace for Nigeria where **travellers** find and book verified 
 The parts of a booking marketplace that go wrong in production, and how this one handles them:
 
 - **Double bookings are impossible at the database level.** `bookings` has an exclusion constraint (`exclude using gist … daterange(check_in, check_out, '[)') with &&`), so two overlapping bookings for the same listing can't both be saved, even if two guests click "Book" in the same second. The UI date picker is a convenience, not the guarantee.
-- **Payments are verified on the server, not trusted from the browser.** A Supabase Edge Function (`supabase/functions/verify-payment`) calls Paystack with the secret key and only marks a booking paid when the transaction succeeded **and** the amount and currency (NGN) match what the server expected. A tampered client can't pay ₦100 for a ₦100,000 stay.
+- **Payments are verified on the server, not trusted from the browser.** A Supabase Edge Function (`supabase/functions/verify-payment`) calls Paystack with the secret key and only marks a booking paid when the transaction succeeded **and** the amount and currency (NGN) match what the server expected. A tampered client can't pay ₦100 for a ₦100,000 stay. That decision lives in a small pure function (`verify.ts`) with 11 unit tests covering underpayment by one kobo, overpayment, wrong currency, abandoned popups, unknown references and malformed responses.
 - **The secret key never reaches the browser.** The client only holds Paystack's public key; verification runs in the Edge Function.
 - **Users can only touch their own data.** Every table uses Postgres row-level security policies, so the rules hold even if someone calls the Supabase API directly instead of using the app.
 - **Trust is earned before listings go live.** Hosts and guides upload ID to a private storage bucket, and an admin approves them before the Verified badge appears.
-- **CI on every push.** GitHub Actions lints the client and runs a production build.
+- **CI on every push.** GitHub Actions lints the client, runs a production build and runs the payment tests.
 
 ---
 

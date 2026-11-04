@@ -10,6 +10,7 @@
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided automatically.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { judgePayment } from './verify.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -57,20 +58,13 @@ Deno.serve(async (req) => {
     const res = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
       headers: { Authorization: `Bearer ${secretKey}` },
     })
-    const body = await res.json()
-    const tx = body?.data
+    const body = await res.json().catch(() => null)
+    const verdict = judgePayment(res.ok, body, payment)
 
-    const succeeded =
-      res.ok && body?.status === true && tx?.status === 'success' && tx.amount === payment.amount && tx.currency === 'NGN'
-
-    if (!succeeded) {
+    if (!verdict.ok) {
       await admin
         .from('payments')
-        .update({
-          status: tx?.status === 'abandoned' ? 'abandoned' : 'failed',
-          gateway_response: tx?.gateway_response ?? body?.message ?? 'Verification failed',
-          verified_at: new Date().toISOString(),
-        })
+        .update({ status: verdict.status, gateway_response: verdict.reason, verified_at: new Date().toISOString() })
         .eq('id', payment.id)
 
       return json(
@@ -84,7 +78,7 @@ Deno.serve(async (req) => {
     const now = new Date().toISOString()
     await admin
       .from('payments')
-      .update({ status: 'success', channel: tx.channel, gateway_response: tx.gateway_response, verified_at: now })
+      .update({ status: 'success', channel: verdict.channel, gateway_response: verdict.gatewayResponse, verified_at: now })
       .eq('id', payment.id)
 
     const { error: bookingError } = await admin
