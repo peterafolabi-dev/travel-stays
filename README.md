@@ -1,9 +1,29 @@
 # Travel & Stays
 
+[![CI](https://github.com/peterafolabi-dev/travel-stays/actions/workflows/ci.yml/badge.svg)](https://github.com/peterafolabi-dev/travel-stays/actions/workflows/ci.yml)
+![React](https://img.shields.io/badge/React-19-61DAFB)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%2B%20RLS-3ECF8E)
+![Paystack](https://img.shields.io/badge/Paystack-test%20mode-0BA4DB)
+
 A two-sided marketplace for Nigeria where **travellers** find and book verified places to stay and local tours, **hosts** list and manage their properties, and **tour guides** list experiences. Payments go through Paystack, and an **admin dashboard** shows live platform activity.
 
 **Live site:** https://travel-stays.vercel.app
 **Built from:** the Travel & Stays Product Requirements Document (PRD)
+
+![Travel & Stays](https://raw.githubusercontent.com/peterafolabi-dev/Retail-Logistics-Core/main/docs/portfolio/travel.jpg)
+
+---
+
+## Engineering decisions
+
+The parts of a booking marketplace that go wrong in production, and how this one handles them:
+
+- **Double bookings are impossible at the database level.** `bookings` has an exclusion constraint (`exclude using gist … daterange(check_in, check_out, '[)') with &&`), so two overlapping bookings for the same listing can't both be saved, even if two guests click "Book" in the same second. The UI date picker is a convenience, not the guarantee.
+- **Payments are verified on the server, not trusted from the browser.** A Supabase Edge Function (`supabase/functions/verify-payment`) calls Paystack with the secret key and only marks a booking paid when the transaction succeeded **and** the amount and currency (NGN) match what the server expected. A tampered client can't pay ₦100 for a ₦100,000 stay.
+- **The secret key never reaches the browser.** The client only holds Paystack's public key; verification runs in the Edge Function.
+- **Users can only touch their own data.** Every table uses Postgres row-level security policies, so the rules hold even if someone calls the Supabase API directly instead of using the app.
+- **Trust is earned before listings go live.** Hosts and guides upload ID to a private storage bucket, and an admin approves them before the Verified badge appears.
+- **CI on every push.** GitHub Actions lints the client and runs a production build.
 
 ---
 
