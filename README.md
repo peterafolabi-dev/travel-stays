@@ -12,6 +12,8 @@ A two-sided marketplace for Nigeria where **travellers** find and book verified 
 
 ![Travel & Stays](https://raw.githubusercontent.com/peterafolabi-dev/Retail-Logistics-Core/main/docs/portfolio/travel.jpg)
 
+**📖 Read the [case study](docs/CASE_STUDY.md)**: the problem, architecture diagrams, a booking step by step, and the hard parts.
+
 ---
 
 ## Engineering decisions
