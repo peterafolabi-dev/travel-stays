@@ -25,6 +25,7 @@ import { Alert } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
 import VerificationCard from '../components/VerificationCard'
 import DeleteAccountCard from '../components/DeleteAccountCard'
+import { isDemoUser } from '../lib/demo'
 
 const ROLE_LABELS = { traveler: 'Traveler', host: 'Host', guide: 'Tour guide', admin: 'Admin' }
 const PHONE_PATTERN = /^[0-9+() -]{7,20}$/
@@ -262,6 +263,7 @@ function PersonalDetails({ user, refreshProfile }) {
 }
 
 function Security() {
+  const { user } = useAuth()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [show, setShow] = useState(false)
@@ -285,6 +287,14 @@ function Security() {
     } finally {
       setSaving(false)
     }
+  }
+
+  if (isDemoUser(user)) {
+    return (
+      <Card title="Password" icon={KeyRound}>
+        <p className="text-sm text-stone-600">This is a shared demo account, so its password can’t be changed.</p>
+      </Card>
+    )
   }
 
   return (

@@ -5,13 +5,14 @@ import { useAuth } from '../context/AuthContext'
 import { deleteMyAccount } from '../lib/safety'
 import { fadeUp } from '../lib/motion'
 import { Alert } from './AuthShell'
+import { isDemoUser } from '../lib/demo'
 
 const CONFIRM_WORD = 'DELETE'
 
 // "Danger zone" on the Profile page: permanently removes the account after the
 // person types DELETE. The database refuses while they have trips coming up.
 export default function DeleteAccountCard() {
-  const { signOut } = useAuth()
+  const { user, signOut } = useAuth()
   const [open, setOpen] = useState(false)
   const [typed, setTyped] = useState('')
   const [error, setError] = useState('')
@@ -30,6 +31,9 @@ export default function DeleteAccountCard() {
       setDeleting(false)
     }
   }
+
+  // Shared demo accounts can't be deleted (the database refuses too).
+  if (isDemoUser(user)) return null
 
   return (
     <motion.section variants={fadeUp} className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-red-200 sm:p-8">

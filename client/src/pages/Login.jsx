@@ -13,6 +13,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
 import GoogleButton from '../components/GoogleButton'
+import DemoLogin from '../components/DemoLogin'
 
 export default function Login() {
   const { user } = useAuth()
@@ -66,6 +67,7 @@ export default function Login() {
 
   return (
     <AuthShell video={videoReels.login} title="Welcome back" subtitle="Log in to manage your trips and bookings.">
+      <DemoLogin onError={setError} />
       <GoogleButton onError={setError} />
       <form onSubmit={handleSubmit} className="space-y-5">
         {location.state?.reason === 'idle' && !error && (

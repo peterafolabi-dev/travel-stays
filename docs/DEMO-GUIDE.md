@@ -2,7 +2,16 @@
 
 **Live site:** https://travel-stays.vercel.app
 
-## Demo accounts
+## One-click demo accounts (for recruiters)
+
+The login page shows **Try a demo account: Traveller · Host · Tour guide**. One click logs in, and a banner shows the Paystack test card. The buttons only appear once these steps are done:
+
+1. In Supabase → **Authentication → Users → Add user**, create three throwaway users (tick *Auto confirm*), e.g. `demo.traveller@…`, `demo.host@…`, `demo.guide@…`, each with its own password. Never use a real person's account here: these logins are public.
+2. Sign in once as the host and the guide and give them a listing and a tour, so there is something to see.
+3. Run `supabase/migrations/016_demo_accounts.sql`, then the `insert into public.demo_accounts …` line from its header comment with the three emails. From then on the database refuses to delete those accounts.
+4. In Vercel → Project → **Settings → Environment Variables**, add `VITE_DEMO_TRAVELLER_EMAIL`, `VITE_DEMO_TRAVELLER_PASSWORD`, and the same for `HOST` and `GUIDE`, then redeploy.
+
+## Personal test accounts
 
 | Role | Email | Password |
 |---|---|---|

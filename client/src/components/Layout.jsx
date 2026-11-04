@@ -5,6 +5,7 @@ import { ease } from '../lib/motion'
 import { useAuth } from '../context/AuthContext'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import DemoBanner from './DemoBanner'
 
 // Every page renders inside this shell. On the home page the navbar floats
 // transparently over the hero photo; elsewhere the content starts below it.
@@ -31,6 +32,7 @@ export default function Layout() {
         transition={{ duration: 0.5, ease }}
         className={`flex-1 ${overlay ? '' : 'pt-20'}`}
       >
+        <DemoBanner />
         <Outlet />
       </motion.main>
       <Footer />
