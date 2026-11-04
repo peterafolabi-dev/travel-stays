@@ -12,7 +12,9 @@ A two-sided marketplace for Nigeria where **travellers** find and book verified 
 
 ![Travel & Stays](https://raw.githubusercontent.com/peterafolabi-dev/Retail-Logistics-Core/main/docs/portfolio/travel.jpg)
 
+<!-- Uncomment once the demo accounts are set up (docs/DEMO-GUIDE.md):
 **⚡ Try it in 30 seconds:** open the [login page](https://travel-stays.vercel.app/login) and click **Traveller**, **Host** or **Tour guide**. No sign-up, and payments use a Paystack test card.
+-->
 
 **📖 Read the [case study](docs/CASE_STUDY.md)**: the problem, architecture diagrams, a booking step by step, and the hard parts.
 
