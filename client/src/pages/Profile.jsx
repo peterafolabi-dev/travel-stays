@@ -324,7 +324,7 @@ function Security() {
             />
           </label>
         </div>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => setShow(!show)}
@@ -402,15 +402,15 @@ export default function Profile() {
         </div>
       </motion.div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <motion.div variants={stagger(0.08, 0.15)} initial="hidden" animate="show" className="space-y-6 lg:col-span-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <motion.div variants={stagger(0.08, 0.15)} initial="hidden" animate="show" className="min-w-0 space-y-6 lg:col-span-2">
           <PersonalDetails user={user} refreshProfile={refreshProfile} />
           {['host', 'guide'].includes(user.role) && <VerificationCard />}
           <Security />
           <DeleteAccountCard />
         </motion.div>
 
-        <motion.aside variants={stagger(0.08, 0.3)} initial="hidden" animate="show" className="space-y-6">
+        <motion.aside variants={stagger(0.08, 0.3)} initial="hidden" animate="show" className="min-w-0 space-y-6">
           <motion.div variants={fadeUp} className="rounded-2xl bg-emerald-900 p-6 text-white">
             <ShieldCheck className="h-7 w-7 text-emerald-300" />
             <h2 className="mt-4 font-display text-2xl">Your privacy</h2>

@@ -152,7 +152,11 @@ export default function NewListing({ existing = null }) {
     if (form.title.trim().length < 5) return 'Give your listing a title of at least 5 characters.'
     if (!form.city.trim()) return 'Enter the city your place is in.'
     if (!(Number(form.price_per_night) > 0)) return 'Enter a nightly price above ₦0.'
+    if (Number(form.price_per_night) > 10000000) return 'Nightly price can be at most ₦10,000,000.'
+    if (Number(form.cleaning_fee) > 1000000) return 'Cleaning fee can be at most ₦1,000,000.'
     if (!(Number(form.max_guests) >= 1)) return 'Your place must fit at least 1 guest.'
+    if (Number(form.max_guests) > 50) return 'A listing can take up to 50 guests. List very large venues separately.'
+    if (!Number.isInteger(Number(form.bedrooms)) || Number(form.bedrooms) < 0 || Number(form.bedrooms) > 30) return 'Bedrooms must be a whole number from 0 to 30.'
     if (photos.length === 0) return 'Add at least one photo.'
     return null
   }
@@ -284,10 +288,10 @@ export default function NewListing({ existing = null }) {
         <Section title="Space and price" description="How many people fit, and what does a night cost?">
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Max guests">
-              <input type="number" min="1" className={inputClass} value={form.max_guests} onChange={update('max_guests')} />
+              <input type="number" min="1" max="50" className={inputClass} value={form.max_guests} onChange={update('max_guests')} />
             </Field>
             <Field label="Bedrooms">
-              <input type="number" min="0" className={inputClass} value={form.bedrooms} onChange={update('bedrooms')} />
+              <input type="number" min="0" max="30" className={inputClass} value={form.bedrooms} onChange={update('bedrooms')} />
             </Field>
             <Field label="Price per night (₦)">
               <input

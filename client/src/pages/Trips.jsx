@@ -249,7 +249,7 @@ export default function Trips() {
         </motion.p>
       </motion.div>
 
-      <div className="mt-8 inline-flex rounded-full bg-stone-200/70 p-1" role="tablist">
+      <div className="mt-8 inline-flex max-w-full overflow-x-auto rounded-full bg-stone-200/70 p-1" role="tablist">
         {TABS.map(({ value, label }) => (
           <button
             key={value}
@@ -257,7 +257,7 @@ export default function Trips() {
             role="tab"
             aria-selected={tab === value}
             onClick={() => setTab(value)}
-            className={`relative rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+            className={`relative shrink-0 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition-colors sm:px-5 ${
               tab === value ? 'text-stone-900' : 'text-stone-600 hover:text-stone-900'
             }`}
           >
