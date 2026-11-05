@@ -36,7 +36,7 @@ const typeBlurbs = {
 
 const steps = [
   { icon: Search, title: 'Search', text: 'Pick a city, your dates and how many guests are coming.' },
-  { icon: CalendarCheck, title: 'Book', text: 'Choose a verified stay and pay securely in naira.' },
+  { icon: CalendarCheck, title: 'Book', text: 'Choose a stay, check the host, and pay securely in naira.' },
   { icon: Compass, title: 'Explore', text: 'Check in, settle down and add local tours to your trip.' },
 ]
 
@@ -152,8 +152,8 @@ function Hero() {
 
       <FloatingBadge
         icon={ShieldCheck}
-        title="ID-verified hosts"
-        text="Every listing is checked"
+        title="ID checks for hosts"
+        text="Look for the Verified badge"
         className="right-[7%] top-[20%]"
         delay={1.5}
       />
@@ -185,7 +185,7 @@ function Hero() {
           transition={{ delay: 0.95, duration: 0.8, ease }}
           className="mt-6 max-w-xl text-lg leading-relaxed text-white/80"
         >
-          Handpicked apartments, guesthouses and homes across Nigeria from verified hosts, with local tours
+          Apartments, guesthouses and homes across Nigeria, with ID-checked hosts and local tours
           to match, all in one place.
         </motion.p>
 
@@ -228,7 +228,7 @@ function Hero() {
           transition={{ delay: 1.4, duration: 0.8 }}
           className="mt-6 text-sm text-white/70"
         >
-          Free to join · Verified hosts · Pay safely with Paystack
+          Free to join · ID-checked hosts · Pay safely with Paystack
         </motion.p>
       </motion.div>
     </section>
@@ -414,11 +414,11 @@ function WhyUs() {
           <div className="relative flex h-full flex-col">
             <ShieldCheck className="h-10 w-10 text-emerald-400" strokeWidth={1.5} />
             <h3 className="mt-auto pt-24 font-display text-4xl leading-tight">
-              Every host is <em className="text-emerald-400"><TypeWriter text="verified." /></em>
+              Know who you’re <em className="text-emerald-400"><TypeWriter text="booking." /></em>
             </h3>
             <p className="mt-4 text-white/70">
-              Hosts and tour guides upload ID and property documents, and our team reviews them before a
-              single listing goes live.
+              Hosts and tour guides can send their ID, and our team checks it before the Verified badge
+              appears on their listings and tours.
             </p>
           </div>
         </Reveal>
@@ -426,8 +426,8 @@ function WhyUs() {
           <CreditCard className="h-9 w-9 text-emerald-700" strokeWidth={1.5} />
           <h3 className="mt-6 font-display text-3xl text-ink">Your money is protected</h3>
           <p className="mt-3 max-w-lg text-stone-600">
-            Pay by card, bank transfer or USSD. We hold the payment and only release it to the host after you
-            check in.
+            Pay by card, bank transfer or USSD through Paystack. Every payment is checked on our server
+            before your booking counts as paid, and your dates can never be sold twice.
           </p>
         </Reveal>
         <Reveal delay={0.2} className="rounded-4xl bg-amber-100/70 p-10">

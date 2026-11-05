@@ -28,7 +28,7 @@ const HEADINGS = {
     eyebrow: 'Explore stays',
     lead: 'Find your next',
     accent: 'stay.',
-    sub: 'Apartments, guesthouses, hotel rooms and whole homes from verified hosts.',
+    sub: 'Apartments, guesthouses, hotel rooms and whole homes across Nigeria.',
   },
   tours: {
     eyebrow: 'Tours & experiences',

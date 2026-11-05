@@ -79,7 +79,7 @@ const ROADMAP = [
   {
     phase: 'Now',
     title: 'Stays, bookings and payments',
-    items: ['Search and book verified stays', 'Instant Book and Request to book', 'Paystack payments', 'Wishlist, trips and host dashboard'],
+    items: ['Search and book stays', 'Instant Book and Request to book', 'Paystack payments', 'Wishlist, trips and host dashboard'],
     done: true,
   },
   {
@@ -142,7 +142,7 @@ export default function About() {
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-stone-600">
             Too often, finding a place to stay means scrolling social media, sending money to someone you've never
             met and hoping the apartment matches the photos. Hosts, meanwhile, juggle DMs, double bookings and late
-            payments. We bring both sides together in one trusted place — with verified listings, protected dates
+            payments. We bring both sides together in one trusted place — with ID-checked hosts, protected dates
             and secure payments.
           </p>
         </Reveal>

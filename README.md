@@ -106,7 +106,7 @@ travel-stays/
 │   └── src/lib/               Data access (Supabase queries) and helpers
 ├── supabase/
 │   ├── schema.sql             Base tables: profiles and listings
-│   ├── migrations/            002–017, run in order
+│   ├── migrations/            002–018, run in order
 │   ├── functions/verify-payment/   Edge Function that confirms Paystack payments
 │   └── demo/                  Optional demo data scripts
 └── docs/                      Demo guide and "how it works" notes
@@ -129,7 +129,7 @@ travel-stays/
    VITE_SUPABASE_ANON_KEY=your-anon-or-publishable-key
    VITE_PAYSTACK_PUBLIC_KEY=pk_test_...
    ```
-3. **Set up the database.** In Supabase, open **SQL Editor** and run `supabase/schema.sql`, then each file in `supabase/migrations/` in number order (002 to 017).
+3. **Set up the database.** In Supabase, open **SQL Editor** and run `supabase/schema.sql`, then each file in `supabase/migrations/` in number order (002 to 018).
 4. **Deploy the payment function** (optional, only needed for payments):
    - Deploy `supabase/functions/verify-payment`.
    - Add the secret `PAYSTACK_SECRET_KEY` under **Edge Functions → Secrets**.
