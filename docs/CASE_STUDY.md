@@ -108,11 +108,23 @@ ID documents go to a private bucket that only admins can read. A host's listings
 ## Results
 
 - Live on Vercel, with demo data scripts covering stays in all 36 states and the FCT, plus tours
-- CI on every push: ESLint, production build and the payment tests
+- CI on every push: ESLint, production build, the payment tests, and a **database job that builds a fresh Postgres 16 from the real migrations** and checks that:
+  - overlapping nights are refused and the check-out day stays free (the exclusion constraint),
+  - 8 sessions booking the same dates at the same instant produce exactly one booking,
+  - the price is worked out by the server, travellers see only their own rows and cannot write bookings or payments directly,
+  - unpaid holds expire without touching paid bookings or one being paid right now
+- The payment decision is a pure function covered by 11 unit tests, and the webhook signature check by 8 more
 - Shipped through Git workflows and code reviews with the MALhub engineering team
+
+## Known limits
+
+- **Hold expiry and the Paystack webhook are written and tested but need switching on:** run `019_expire_unpaid_holds.sql` in the Supabase SQL editor (and enable pg_cron for the hourly schedule), and deploy `paystack-webhook` with `--no-verify-jwt`, then add its URL in the Paystack dashboard. Until then, a guest who closes the tab right after paying is only confirmed if verify-payment ran.
+- Each traveller was already limited to 3 unpaid holds (migration 017), but a hold never expired before 019.
+- If a guest pays after their unpaid booking has been expired, the money is recorded but the booking is cancelled; an admin has to refund it. (Expiry skips any booking with a payment attempt in the last hour to make this rare.)
+- Payments run in Paystack test mode. Host payouts are not held until check-in, and refunds are recorded for an admin to process by hand.
 
 ## What I'd do next
 
-- Hold host payouts until check-in using Paystack split payments and subaccounts. Today the platform records refunds for an admin to process.
-- Database tests that prove the overlap constraint and RLS policies in CI, using the Supabase CLI
-- Paystack webhooks as a second confirmation path, in case the guest closes the tab before verification runs
+- Hold host payouts until check-in using Paystack split payments and subaccounts
+- Run the database tests against the Supabase CLI's local stack (real auth and storage) instead of the small stand-ins in `supabase/tests/prelude.sql`
+- Row-level-security tests for the tours tables as well as stays

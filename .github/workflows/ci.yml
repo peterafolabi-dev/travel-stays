@@ -46,5 +46,31 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Unit tests for verify-payment
-        run: node --experimental-strip-types --test supabase/functions/verify-payment/verify.test.ts
+      - name: Unit tests for verify-payment and the Paystack webhook
+        run: node --experimental-strip-types --test supabase/functions/verify-payment/verify.test.ts supabase/functions/paystack-webhook/webhook.test.ts
+
+  database:
+    name: Database tests (real Postgres)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run migrations and SQL tests (double booking, race, row-level security, expiry)
+        run: supabase/tests/run.sh
